@@ -1,0 +1,19 @@
+server:
+  port: 7006
+
+spring:
+  application:
+    name: webhook-dingtalk-dispatcher
+  # h2 database
+  datasource:
+    url: jdbc:h2:file:${data.dir:${user.dir}}/data/db/webhook-dingtalk-dispatcher
+    driver-class-name: org.h2.Driver
+    username: kafka
+    password: 1234567890
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      schema-locations: classpath:db/schema-h2.sql
+      mode: always
