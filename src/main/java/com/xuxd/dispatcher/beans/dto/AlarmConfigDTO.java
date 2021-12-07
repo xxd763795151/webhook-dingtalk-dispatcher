@@ -22,12 +22,19 @@ public class AlarmConfigDTO {
 
     private String remark;
 
+    private boolean enableFilter;
+
+    private boolean enable;
+
     public AlarmConfigDO toDO() {
         AlarmConfigDO configDO = new AlarmConfigDO();
         configDO.setId(id);
         configDO.setUrl(url);
         configDO.setKeys(keys);
         configDO.setSecret(secret);
+        configDO.setRemark(remark);
+        configDO.setEnable(enable);
+        configDO.setEnableFilter(enableFilter);
 
         return configDO;
     }

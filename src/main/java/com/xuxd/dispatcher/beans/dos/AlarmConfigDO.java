@@ -27,4 +27,8 @@ public class AlarmConfigDO {
     private String remark;
 
     private String updateTime;
+
+    private boolean enableFilter;
+
+    private boolean enable;
 }
