@@ -35,11 +35,4 @@ public class DispatcherController {
         }
         return dispatcherService.dispatch(args, body);
     }
-
-    // 签名：SEC8b9e1c2eb7f21821d13f56ce804dca874663fae08021a411dd6bf6679391ba5e
-    // https://oapi.dingtalk.com/robot/send?access_token=6a940d0b7ebdf4d0e7e08cf76803ac24a1d81430ad1ec83de24039ac8667df46
-
-    // https://oapi.dingtalk.com/robot/send?access_token=a5750cc9b16c0505b4b072ede275b99a8067c1cf5eb8bbc1e5988f34aca0aab4
-
-    // https://oapi.dingtalk.com/robot/send?access_token=ca65878b8a86d790167cd5eea8648d3226761c062b4b81b3266012b06d97d406
 }

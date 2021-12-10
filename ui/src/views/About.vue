@@ -1,5 +1,21 @@
 <template>
   <div class="about">
-    <h1>prometheus web hook ding talk dispatcher.</h1>
+    <div class="help">
+      <h1>配置说明</h1>
+      <hr>
+      <h2>启用配置</h2>
+      <p>如果不启用，则告警的时候消息通知不会针对这条配置进行处理。</p>
+      <h2>关键字过滤</h2>
+      <p>以下都是在启用配置的情况下：</p>
+      <p>告警的时候，会将告警信息与提供的关键字进行匹配，如果信息中包含关键字（任意一条关键字），则将该告警信息发往对应的钉钉机器人。</p>
+      <p>启用关键字过滤，但是关键字为空，则认为都不匹配，即任何告警信息都不发往该机器人。</p>
+      <p>如果不启用关键字过滤，则所有告警信息都发往该机器人。即不进行关键字过滤。</p>
+    </div>
+
   </div>
 </template>
+<style scoped>
+.help {
+  text-align: left;
+}
+</style>

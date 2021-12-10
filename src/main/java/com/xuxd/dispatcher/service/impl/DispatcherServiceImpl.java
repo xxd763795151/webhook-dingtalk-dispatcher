@@ -34,7 +34,11 @@ public class DispatcherServiceImpl implements DispatcherService {
 
         List<AlarmConfigDO> configDOS = alarmConfigMapper.selectList(new QueryWrapper<>());
 
-        configDOS.forEach(config -> dispatcherExecutor.executeAsync(args, body, config.getUrl(), config.getSecret(), config.getKeys().split(",")));
+        configDOS.forEach(config -> {
+            if (config.isEnable()) {
+                dispatcherExecutor.executeAsync(args, body, config.getUrl(), config.getSecret(), config.isEnableFilter(), config.getKeys().split(","));
+            }
+        });
         return DingResponse.def();
     }
 

@@ -27,25 +27,31 @@ public class DispatcherExecutor {
     private static final String TIMESTAMP = "timestamp";
 
     @Async
-    public void executeAsync(Map<String, Object> args, String body, String url, String secret, String... keys) {
-        execute(args, body, url, secret, keys);
+    public void executeAsync(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
+        String... keys) {
+        execute(args, body, url, secret, keysFilter, keys);
     }
 
-    public DingResponse execute(Map<String, Object> args, String body, String url, String secret, String... keys) {
-        boolean pass = false;
-        for (String key : keys) {
-            if (body.indexOf(key.trim()) >= 0) {
-                pass = true;
-                break;
+    public DingResponse execute(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
+        String... keys) {
+        // 是否通过一些关键字进行过滤
+        if (keysFilter) {
+            boolean pass = false;
+            for (String key : keys) {
+                if (body.indexOf(key.trim()) >= 0) {
+                    pass = true;
+                    break;
+                }
+            }
+
+            if (!pass) {
+                DingResponse response = new DingResponse();
+                response.setErrcode(-9999);
+                response.setErrmsg("keys is not match.");
+                return response;
             }
         }
 
-        if (!pass) {
-            DingResponse response = new DingResponse();
-            response.setErrcode(-9999);
-            response.setErrmsg("keys is not match.");
-            return response;
-        }
         // trie树比上面的写法慢
 //        if (!new Trie(keys).matchAny(body)) {
 //            return;
