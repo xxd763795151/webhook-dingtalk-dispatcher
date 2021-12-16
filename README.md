@@ -7,6 +7,8 @@ prometheus + alert-manager + webhook-dingtalk 向钉钉告警，如果想要不�
 打个比方，监控mq的告警，不同的项目用的是不同的topic，各自项目只想接收自己topic的监控告警信息，就可以通过
 这个很容易配置。
 
+## 下载
+点击下载：[webhook-dingtalk-dispatcher.zip](https://github.com/xxd763795151/webhook-dingtalk-dispatcher/releases/download/1.0.0/webhook-dingtalk-dispatcher.zip)
 ## 安装
 将安装包下载下来并解压开，配置文件：config/application.yml
 ```shell
