@@ -58,6 +58,17 @@
               v-decorator="['keys', { initialValue: defaultConfig.keys }]"
             />
           </a-form-item>
+          <a-form-item label="关键字条件">
+            <a-radio-group
+              v-decorator="[
+                'filterType',
+                { initialValue: defaultConfig.filterType },
+              ]"
+            >
+              <a-radio-button value="OR"> 匹配任一关键字 </a-radio-button>
+              <a-radio-button value="AND"> 匹配全部关键字 </a-radio-button>
+            </a-radio-group>
+          </a-form-item>
           <a-form-item label="启用配置">
             <a-switch
               v-decorator="[

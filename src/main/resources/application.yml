@@ -17,3 +17,6 @@ spring:
     init:
       schema-locations: classpath:db/schema-h2.sql
       mode: always
+
+# 设置一个access-token，算是增加一点安全性
+access-token: 1234567890

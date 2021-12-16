@@ -38,6 +38,10 @@
               ><a-icon type="close-circle" theme="twoTone" two-tone-color="red"
             /></span>
           </div>
+          <div slot="filterType" slot-scope="filterType">
+            <span v-if="filterType == 'OR'">匹配任一关键字</span>
+            <span v-else>匹配全部</span>
+          </div>
           <div slot="operation" slot-scope="record" v-show="!record.internal">
             <a-button
               size="small"
@@ -62,7 +66,7 @@
       <AddAlarmConfig
         :visible="showAddAlarmConfigDialog"
         close-callback="closeAddAlarmConfigDialog"
-        :default-config="{ enable: true, enableFilter: true }"
+        :default-config="{ enable: true, enableFilter: true, filterType: 'OR' }"
         @closeAddAlarmConfigDialog="closeAddAlarmConfigDialog"
       ></AddAlarmConfig>
       <AddAlarmConfig
@@ -191,6 +195,12 @@ const columns = [
     dataIndex: "enableFilter",
     key: "enableFilter",
     scopedSlots: { customRender: "enableFilter" },
+  },
+  {
+    title: "关键字条件",
+    dataIndex: "filterType",
+    key: "filterType",
+    scopedSlots: { customRender: "filterType" },
   },
   {
     title: "启用配置",

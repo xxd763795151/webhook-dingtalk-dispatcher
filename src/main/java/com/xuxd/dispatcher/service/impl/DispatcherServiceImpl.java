@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xuxd.dispatcher.beans.DingResponse;
 import com.xuxd.dispatcher.beans.dos.AlarmConfigDO;
 import com.xuxd.dispatcher.common.DispatcherExecutor;
+import com.xuxd.dispatcher.common.FilterType;
 import com.xuxd.dispatcher.dao.AlarmConfigMapper;
 import com.xuxd.dispatcher.service.DispatcherService;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,8 @@ public class DispatcherServiceImpl implements DispatcherService {
 
         configDOS.forEach(config -> {
             if (config.isEnable()) {
-                dispatcherExecutor.executeAsync(args, body, config.getUrl(), config.getSecret(), config.isEnableFilter(), config.getKeys().split(","));
+                dispatcherExecutor.executeAsync(args, body, config.getUrl(), config.getSecret(),
+                    config.isEnableFilter(), FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT)), config.getKeys().split(","));
             }
         });
         return DingResponse.def();

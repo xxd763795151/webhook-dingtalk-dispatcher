@@ -28,20 +28,39 @@ public class DispatcherExecutor {
 
     @Async
     public void executeAsync(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
+        FilterType type,
         String... keys) {
-        execute(args, body, url, secret, keysFilter, keys);
+        execute(args, body, url, secret, keysFilter, type, keys);
     }
 
     public DingResponse execute(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
+        FilterType type,
         String... keys) {
         // 是否通过一些关键字进行过滤
         if (keysFilter) {
             boolean pass = false;
-            for (String key : keys) {
-                if (body.indexOf(key.trim()) >= 0) {
-                    pass = true;
+            switch (type) {
+                case OR:
+                    for (String key : keys) {
+                        if (StringUtils.isNotBlank(key) && body.indexOf(key.trim()) >= 0) {
+                            pass = true;
+                            break;
+                        }
+                    }
                     break;
-                }
+                case AND:
+                    int size = keys.length;
+                    if (size > 0) {
+                        for (String key : keys) {
+                            if (StringUtils.isNotBlank(key) && body.indexOf(key.trim()) >= 0) {
+                                size--;
+                            }
+                        }
+                        pass = size == 0;
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("filter type is illegal.");
             }
 
             if (!pass) {

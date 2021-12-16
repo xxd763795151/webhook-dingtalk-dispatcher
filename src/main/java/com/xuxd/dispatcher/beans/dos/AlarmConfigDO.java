@@ -30,5 +30,7 @@ public class AlarmConfigDO {
 
     private boolean enableFilter;
 
+    private String filterType;
+
     private boolean enable;
 }

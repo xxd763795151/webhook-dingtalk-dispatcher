@@ -26,6 +26,8 @@ public class AlarmConfigDTO {
 
     private boolean enable;
 
+    private String filterType;
+
     public AlarmConfigDO toDO() {
         AlarmConfigDO configDO = new AlarmConfigDO();
         configDO.setId(id);
@@ -35,6 +37,7 @@ public class AlarmConfigDTO {
         configDO.setRemark(remark);
         configDO.setEnable(enable);
         configDO.setEnableFilter(enableFilter);
+        configDO.setFilterType(filterType);
 
         return configDO;
     }
