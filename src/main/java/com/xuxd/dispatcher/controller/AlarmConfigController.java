@@ -43,4 +43,9 @@ public class AlarmConfigController {
     public Object update(@RequestBody AlarmConfigDTO dto) {
         return alarmConfigService.updateAlarmConfig(dto);
     }
+
+    @PostMapping("/test")
+    public Object test(@RequestBody AlarmConfigDTO dto) {
+        return alarmConfigService.testAlarmConfig(dto);
+    }
 }

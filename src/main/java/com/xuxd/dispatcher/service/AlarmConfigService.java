@@ -18,4 +18,6 @@ public interface AlarmConfigService {
     ResponseData deleteAlarmConfig(AlarmConfigDTO dto);
 
     ResponseData updateAlarmConfig(AlarmConfigDTO dto);
+
+    ResponseData testAlarmConfig(AlarmConfigDTO dto);
 }

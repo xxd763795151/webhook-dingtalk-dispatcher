@@ -89,6 +89,9 @@
           </a-form-item>
           <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
             <a-button type="primary" html-type="submit"> 提交 </a-button>
+            <a-button type="danger" class="test-btn" @click="testConfig">
+              测试连接
+            </a-button>
           </a-form-item>
         </a-form>
       </a-spin>
@@ -176,6 +179,30 @@ export default {
         }
       });
     },
+    testConfig(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.loading = true;
+          const api = AlarmConfig.test;
+          request({
+            url: api.url,
+            method: api.method,
+            data: values,
+          }).then((res) => {
+            this.loading = false;
+            if (res.code == 0) {
+              this.$message.success(res.msg);
+            } else {
+              notification.error({
+                message: "error",
+                description: res.msg,
+              });
+            }
+          });
+        }
+      });
+    },
     handleCancel() {
       this.data = [];
       this.$emit(this.closeCallback, { refresh: false });
@@ -184,4 +211,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.test-btn {
+  float: right;
+}
+</style>

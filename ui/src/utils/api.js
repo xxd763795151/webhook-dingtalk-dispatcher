@@ -15,4 +15,8 @@ export const AlarmConfig = {
     url: "/alarm/config",
     method: "get",
   },
+  test: {
+    url: "/alarm/config/test",
+    method: "post",
+  },
 };
