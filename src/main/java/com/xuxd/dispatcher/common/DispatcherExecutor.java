@@ -2,12 +2,14 @@ package com.xuxd.dispatcher.common;
 
 import com.xuxd.dispatcher.beans.DingResponse;
 import com.xuxd.dispatcher.utils.SignUtil;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * webhook-dingtalk-dispatcher.
@@ -28,14 +30,19 @@ public class DispatcherExecutor {
 
     @Async
     public void executeAsync(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
-        FilterType type,
-        String... keys) {
+                             FilterType type,
+                             String... keys) {
         execute(args, body, url, secret, keysFilter, type, keys);
     }
 
+    @Async
+    public void executeSmsAsync(List<String> mobiles, String message) {
+        executeSms(mobiles, message);
+    }
+
     public DingResponse execute(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
-        FilterType type,
-        String... keys) {
+                                FilterType type,
+                                String... keys) {
         // 是否通过一些关键字进行过滤
         if (keysFilter) {
             boolean pass = false;
@@ -101,5 +108,10 @@ public class DispatcherExecutor {
             response.setErrmsg("unknown error: " + e.getMessage());
             return response;
         }
+    }
+
+    public DingResponse executeSms(List<String> mobiles, String message) {
+        log.info("Sms alarm, mobiles: {}, message: {}", mobiles, message);
+        return DingResponse.def();
     }
 }

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import Sms from "../views/Sms.vue";
 
 Vue.use(VueRouter);
 
@@ -9,6 +10,11 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/sms",
+    name: "Sms",
+    component: Sms,
   },
   {
     path: "/about",
@@ -22,7 +28,8 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode: "history",
+  // mode: "history",
+  mode: "hash",
   base: process.env.BASE_URL,
   routes,
 });

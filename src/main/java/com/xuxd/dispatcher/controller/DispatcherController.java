@@ -34,6 +34,7 @@ public class DispatcherController {
 
     @PostMapping
     public Object dispatch(HttpServletRequest request, @RequestBody String body) {
+        log.info("Receive Alert Message: {}", body);
         Enumeration<String> names = request.getParameterNames();
         Map<String, Object> args = new HashMap<>();
         while (names.hasMoreElements()) {

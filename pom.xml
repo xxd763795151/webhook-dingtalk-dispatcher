@@ -1,189 +1,224 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.xuxd</groupId>
-	<artifactId>webhook-dingtalk-dispatcher</artifactId>
-	<version>1.0.0</version>
-	<name>webhook-dingtalk-dispatcher</name>
-	<description>prometheus webhook dingtalk dspatcher</description>
-	<properties>
-		<java.version>1.8</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mybatis-plus-boot-starter.version>3.4.2</mybatis-plus-boot-starter.version>
-		<ui.path>${project.basedir}/ui</ui.path>
-		<frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
-		<compiler.version>1.8</compiler.version>
-		<maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.1</version>
+<!--        <version>2.4.10</version>-->
+<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+    </parent>
+    <groupId>com.xuxd</groupId>
+    <artifactId>webhook-dingtalk-dispatcher</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>webhook-dingtalk-dispatcher</name>
+    <description>prometheus webhook dingtalk dspatcher</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mybatis-plus-boot-starter.version>3.4.2</mybatis-plus-boot-starter.version>
+        <ui.path>${project.basedir}/ui</ui.path>
+        <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
+        <compiler.version>1.8</compiler.version>
+        <maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
 
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus-boot-starter</artifactId>
-			<version>${mybatis-plus-boot-starter.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis-plus-boot-starter.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.12.0</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.2</version>
-		</dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.20</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.8</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.8</version>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<finalName>${project.artifactId}</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+    <build>
+        <finalName>${project.artifactId}</finalName>
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>true</filtering>-->
+<!--                <includes>-->
+<!--                    <include>**/*.*</include>-->
+<!--                    <include>**/*.yaml</include>-->
+<!--                    <include>**/*.properties</include>-->
+<!--                    <include>**/*.yml</include>-->
+<!--                    <include>**/*.xml</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
+<!--        </resources>-->
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
 
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${compiler.version}</source>
-					<target>${compiler.version}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>${frontend-maven-plugin.version}</version>
-				<configuration>
-					<workingDirectory>${ui.path}</workingDirectory>
-					<nodeVersion>v14.16.0</nodeVersion>
-					<downloadRoot>http://npm.taobao.org/mirrors/node/</downloadRoot>
-				</configuration>
-				<executions>
-					<execution>
-						<id>install node and npm</id>
-						<goals>
-							<goal>install-node-and-npm</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>install --registry=https://registry.npmjs.org/</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm run build</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>run build</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.1.0</version>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<outputDirectory>${project.build.directory}</outputDirectory>
-					<resources>
-						<resource>
-							<targetPath>${basedir}/target/classes/public</targetPath>
-							<directory>${ui.path}/dist</directory>
-						</resource>
-						<resource>
-							<targetPath>${basedir}/target/classes</targetPath>
-							<directory>src/main/resources</directory>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven.assembly.plugin.version}</version>
-				<executions>
-					<execution>
-						<id>kafka-console-ui</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>${project.basedir}/assembly.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<attach>true</attach>
-					<tarLongFileMode>posix</tarLongFileMode>
-					<runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>${compiler.version}</source>
+                            <target>${compiler.version}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <!--                            <debug>false</debug>-->
+                            <!--                            <parameters>false</parameters>-->
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>${frontend-maven-plugin.version}</version>
+                        <configuration>
+                            <workingDirectory>${ui.path}</workingDirectory>
+                            <nodeVersion>v14.16.0</nodeVersion>
+                            <downloadRoot>http://npm.taobao.org/mirrors/node/</downloadRoot>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <!--                                    <arguments>install &#45;&#45;registry=https://registry.npmjs.org/</arguments>-->
+                                    <arguments>install --registry=https://registry.npm.taobao.org</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm run build</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>run build</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <targetPath>${basedir}/target/classes/public</targetPath>
+                                    <directory>${ui.path}/dist</directory>
+                                </resource>
+                                <resource>
+                                    <targetPath>${basedir}/target/classes</targetPath>
+                                    <directory>src/main/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven.assembly.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>kafka-console-ui</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/assembly.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <attach>true</attach>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                            <runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>
