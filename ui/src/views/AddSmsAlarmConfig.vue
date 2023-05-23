@@ -36,10 +36,10 @@
           </a-form-item>
           <a-form-item label="类型">
             <a-radio-group
-              v-decorator="['type', { initialValue: defaultConfig.type+'' }]"
+              v-decorator="['type', { initialValue: defaultConfig.type + '' }]"
             >
-              <a-radio-button value='0'> 短信 </a-radio-button>
-              <a-radio-button value='1'> 语音 </a-radio-button>
+              <a-radio-button value="0"> 短信 </a-radio-button>
+              <a-radio-button value="1"> 语音 </a-radio-button>
             </a-radio-group>
           </a-form-item>
           <a-form-item label="启用关键字过滤">
@@ -94,8 +94,11 @@
               rows="6"
               placeholder="告警模板，示例如下（这句话删除，短信下面的签名【xxx】一定要有）：
 【xxx告警】：
+告警名称：${alertname}
 摘要：${summary}
 描述：${description}
+开始时间：${startsAt}
+结束时间：${endsAt}
 其它标签：...
 "
               v-decorator="[

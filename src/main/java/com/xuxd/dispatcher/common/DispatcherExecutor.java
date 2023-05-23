@@ -1,6 +1,7 @@
 package com.xuxd.dispatcher.common;
 
 import com.xuxd.dispatcher.beans.DingResponse;
+import com.xuxd.dispatcher.support.SmsAlert;
 import com.xuxd.dispatcher.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,12 @@ public class DispatcherExecutor {
 
     private static final String TIMESTAMP = "timestamp";
 
+    private final SmsAlert smsAlert;
+
+    public DispatcherExecutor(SmsAlert smsAlert) {
+        this.smsAlert = smsAlert;
+    }
+
     @Async
     public void executeAsync(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
                              FilterType type,
@@ -36,8 +43,8 @@ public class DispatcherExecutor {
     }
 
     @Async
-    public void executeSmsAsync(List<String> mobiles, String message) {
-        executeSms(mobiles, message);
+    public void executeSmsAsync(List<String> mobiles, String message, int type) {
+        executeSms(mobiles, message, type);
     }
 
     public DingResponse execute(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
@@ -110,8 +117,11 @@ public class DispatcherExecutor {
         }
     }
 
-    public DingResponse executeSms(List<String> mobiles, String message) {
+    public DingResponse executeSms(List<String> mobiles, String message, int type) {
         log.info("Sms alarm, mobiles: {}, message: {}", mobiles, message);
+        for (String mobile : mobiles) {
+            smsAlert.send(mobile, message, type);
+        }
         return DingResponse.def();
     }
 }

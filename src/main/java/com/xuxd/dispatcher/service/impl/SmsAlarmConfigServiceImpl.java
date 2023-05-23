@@ -1,6 +1,7 @@
 package com.xuxd.dispatcher.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xuxd.dispatcher.beans.AlertStatus;
 import com.xuxd.dispatcher.beans.DingResponse;
 import com.xuxd.dispatcher.beans.ResponseData;
 import com.xuxd.dispatcher.beans.dto.SmsAlarmConfigDTO;
@@ -59,11 +60,15 @@ public class SmsAlarmConfigServiceImpl implements SmsAlarmConfigService {
     public ResponseData testAlarmConfig(SmsAlarmConfigDTO dto) {
         log.info("test alarm config: {}", dto);
         Map<String, Object> labels = new HashMap<>();
+        labels.put("alertname", "告警测试");
         labels.put("summary", "测试配置");
+        labels.put("status", ConvertUtil.statusOf(AlertStatus.FIRING));
         labels.put("description", "测试配置，告警内容请忽略");
+        labels.put("startsAt", ConvertUtil.utc2Gmt8("2023-05-22T10:41:31.557Z"));
+        labels.put("endsAt", ConvertUtil.utc2Gmt8("0001-01-01T00:00:00Z"));
         String messageBody = ConvertUtil.convert(dto.getTemplate(), labels);
         Set<String> set = Arrays.stream(dto.getMobile().split(",")).map(String::trim).filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
-        DingResponse response = dispatcherExecutor.executeSms(new ArrayList<>(set), messageBody);
+        DingResponse response = dispatcherExecutor.executeSms(new ArrayList<>(set), messageBody, dto.getType());
         log.info("test response: {}", response);
         ResponseData responseData = ResponseData.create();
         responseData.setCode(response.getErrcode());

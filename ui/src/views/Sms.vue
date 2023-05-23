@@ -42,6 +42,10 @@
             <span v-if="filterType == 'OR'">匹配任一关键字</span>
             <span v-else>匹配全部</span>
           </div>
+          <div slot="type" slot-scope="type">
+            <span v-if="type == '0'">短信</span>
+            <span v-else>语音</span>
+          </div>
           <div slot="operation" slot-scope="record" v-show="!record.internal">
             <a-button
               size="small"
@@ -71,11 +75,16 @@
           enableFilter: true,
           filterType: 'OR',
           type: '0',
-          template: '告警模板，示例如下（这句话删除，短信下面的签名【xxx】一定要有）：\n'+
-'【xxx告警】：\n'+
-'摘要：${summary}\n'+
-'描述：${description}\n'+
-'其它标签：...',
+          template:
+            '【xxx告警】：\n' +
+            '告警名称：${alertname}\n' +
+            '状态：${status}\n' +
+            '摘要：${summary}\n' +
+            '描述：${description}\n' +
+            '开始时间：${startsAt}\n' +
+            '结束时间：${endsAt}\n' +
+            '未知标签：${unknown}\n' +
+            '其它标签：...',
         }"
         @closeAddAlarmConfigDialog="closeAddAlarmConfigDialog"
       ></AddAlarmConfig>
@@ -91,7 +100,7 @@
 
 <script>
 import request from "@/utils/request";
-import {SmsAlarmConfig} from "@/utils/api";
+import { SmsAlarmConfig } from "@/utils/api";
 import notification from "ant-design-vue/lib/notification";
 import AddAlarmConfig from "./AddSmsAlarmConfig.vue";
 
@@ -187,6 +196,7 @@ const columns = [
     title: "类型",
     dataIndex: "type",
     key: "type",
+    scopedSlots: { customRender: "type" },
   },
   {
     title: "关键字",

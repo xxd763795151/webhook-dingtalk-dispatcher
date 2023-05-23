@@ -1,5 +1,11 @@
 package com.xuxd.dispatcher.utils;
 
+import com.xuxd.dispatcher.beans.AlertStatus;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -41,5 +47,25 @@ public class ConvertUtil {
             }
         }
         return content;
+    }
+
+    public static String utc2Gmt8(String utcDateStr) {
+        Instant instant = Instant.parse(utcDateStr);
+        ZoneId zoneId = ZoneId.of("Asia/Shanghai");
+        ZonedDateTime zonedDateTime = instant.atZone(zoneId);
+
+        // 格式化输出：2022-05-01 08:00:00
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return zonedDateTime.format(formatter);
+    }
+
+    public static String statusOf(String status) {
+        switch (status) {
+            case AlertStatus.FIRING:
+                return "触发告警";
+            case AlertStatus.RESOLVED:
+                return "问题已解决";
+        }
+        return "触发告警";
     }
 }
