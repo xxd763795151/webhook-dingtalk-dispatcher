@@ -6,6 +6,7 @@ import com.xuxd.dispatcher.beans.DingResponse;
 import com.xuxd.dispatcher.beans.ResponseData;
 import com.xuxd.dispatcher.beans.dto.SmsAlarmConfigDTO;
 import com.xuxd.dispatcher.common.DispatcherExecutor;
+import com.xuxd.dispatcher.common.FilterType;
 import com.xuxd.dispatcher.dao.SmsAlarmConfigMapper;
 import com.xuxd.dispatcher.service.SmsAlarmConfigService;
 import com.xuxd.dispatcher.utils.ConvertUtil;
@@ -68,7 +69,8 @@ public class SmsAlarmConfigServiceImpl implements SmsAlarmConfigService {
         labels.put("endsAt", ConvertUtil.utc2Gmt8("0001-01-01T00:00:00Z"));
         String messageBody = ConvertUtil.convert(dto.getTemplate(), labels);
         Set<String> set = Arrays.stream(dto.getMobile().split(",")).map(String::trim).filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
-        DingResponse response = dispatcherExecutor.executeSms(new ArrayList<>(set), messageBody, dto.getType());
+        DingResponse response = dispatcherExecutor.executeFromAlert(new ArrayList<>(set), messageBody, dto.getType(),
+                true, FilterType.OR, "测试");
         log.info("test response: {}", response);
         ResponseData responseData = ResponseData.create();
         responseData.setCode(response.getErrcode());

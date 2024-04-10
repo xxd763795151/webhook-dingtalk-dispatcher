@@ -1,6 +1,7 @@
 package com.xuxd.dispatcher.utils;
 
 import com.xuxd.dispatcher.beans.AlertStatus;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -60,12 +61,15 @@ public class ConvertUtil {
     }
 
     public static String statusOf(String status) {
-        switch (status) {
-            case AlertStatus.FIRING:
-                return "触发告警";
-            case AlertStatus.RESOLVED:
-                return "问题已解决";
+        if (StringUtils.isNotEmpty(status)) {
+            switch (status) {
+                case AlertStatus.FIRING:
+                    return "触发告警";
+                case AlertStatus.RESOLVED:
+                    return "问题已解决";
+            }
         }
+
         return "触发告警";
     }
 }

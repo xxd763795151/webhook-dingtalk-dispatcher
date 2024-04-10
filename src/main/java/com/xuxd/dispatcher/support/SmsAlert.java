@@ -30,7 +30,25 @@ public class SmsAlert {
 
     public void send(String mobile, String message, int type) {
         try {
-
+            Integer userId = null;
+            String password = "";
+            String url = "";
+            switch (type) {
+                case SmsType.SMS:
+                    userId = smsProperties.getSmsUser().getUserId();
+                    password = smsProperties.getSmsUser().getPassword();
+                    url = smsProperties.getSmsUser().getUrl();
+                    break;
+                case SmsType.VOICE:
+                    userId = smsProperties.getVoiceUser().getUserId();
+                    password = smsProperties.getVoiceUser().getPassword();
+                    url = smsProperties.getVoiceUser().getUrl();
+                    break;
+            }
+            Map<String, String> params = new HashMap<>();
+            // TODO: 在这里增加对应的告警参数配置
+            String response = restClient.postForm(url, params, String.class);
+            log.info("Send complete, response: {}", response);
         } catch (Exception e) {
             log.error("Send failed, mobile: {}, message: {}, type: {}", mobile, message, type, e);
         }

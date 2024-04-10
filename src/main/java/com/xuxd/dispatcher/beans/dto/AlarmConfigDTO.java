@@ -28,6 +28,8 @@ public class AlarmConfigDTO {
 
     private String filterType;
 
+    private String template;
+
     public AlarmConfigDO toDO() {
         AlarmConfigDO configDO = new AlarmConfigDO();
         configDO.setId(id);
@@ -38,6 +40,7 @@ public class AlarmConfigDTO {
         configDO.setEnable(enable);
         configDO.setEnableFilter(enableFilter);
         configDO.setFilterType(filterType);
+        configDO.setTemplate(template);
 
         return configDO;
     }

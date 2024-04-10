@@ -3,7 +3,6 @@ package com.xuxd.dispatcher.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
 import com.xuxd.dispatcher.beans.AlertMessage;
-import com.xuxd.dispatcher.beans.AlertStatus;
 import com.xuxd.dispatcher.beans.DingResponse;
 import com.xuxd.dispatcher.beans.dos.AlarmConfigDO;
 import com.xuxd.dispatcher.beans.dos.SmsAlarmConfigDO;
@@ -19,10 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,18 +50,19 @@ public class DispatcherServiceImpl implements DispatcherService {
     @Override
     public DingResponse dispatch(Map<String, Object> args, String body) {
 
-        // ding ding
         List<AlarmConfigDO> configDOS = alarmConfigMapper.selectList(new QueryWrapper<>());
 
-        configDOS.forEach(config -> {
-            if (config.isEnable()) {
-                dispatcherExecutor.executeAsync(args, body, config.getUrl(), config.getSecret(),
-                        config.isEnableFilter(), FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT)), config.getKeys().split(","));
-            }
-        });
-
-        // custom sms
-        List<SmsAlarmConfigDO> smsAlarmConfigDOS = smsAlarmConfigMapper.selectList(null);
+        if (args.containsKey("dingtalk")) {
+            // 通过dingtalk过来的，数据不要处理，透传
+            configDOS.forEach(config -> {
+                if (config.isEnable()) {
+                    dispatcherExecutor.executeStandardDingBodyAsync(args, body, config.getUrl(), config.getSecret(),
+                            config.isEnableFilter(), FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT)), config.getKeys().split(","));
+                }
+            });
+            return DingResponse.def();
+        }
+        // 下面是对接原生的alert manager.
 
         AlertMessage alertMessage = null;
         try {
@@ -75,19 +71,64 @@ public class DispatcherServiceImpl implements DispatcherService {
             log.error("Parse alert message failed : {}", body, e);
             return DingResponse.def();
         }
+
         Map<String, Object> defaultLabels = new HashMap<>();
-        defaultLabels.putAll(alertMessage.getGroupLabels());
-        defaultLabels.putAll(alertMessage.getCommonAnnotations());
-        defaultLabels.putAll(alertMessage.getCommonLabels());
+        if (alertMessage.getGroupLabels() != null) {
+            defaultLabels.putAll(alertMessage.getGroupLabels());
+        }
+        if (alertMessage.getCommonAnnotations() != null) {
+
+            defaultLabels.putAll(alertMessage.getCommonAnnotations());
+        }
+        if (alertMessage.getCommonLabels() != null) {
+
+            defaultLabels.putAll(alertMessage.getCommonLabels());
+        }
+
+        // ding ding
+//        if (defaultLabels.containsKey(DingMessageKeys.MSG_TYPE)) {
+//            String type = (String) defaultLabels.get(DingMessageKeys.MSG_TYPE);
+//            String title = (String) defaultLabels.get(DingMessageKeys.TITLE);
+//            String content = (String) defaultLabels.get(DingMessageKeys.CONTENT);
+//            Map<String, Object> params = new HashMap<>();
+//            params.put(DingMessageKeys.MSG_TYPE, type);
+//            Map<String, Object> contentMap = new HashMap<>();
+//            contentMap.put(DingMessageKeys.TITLE, title);
+//            contentMap.put(DingMessageKeys.CONTENT, content);
+//            params.put(type, contentMap);
+//            configDOS.forEach(config -> {
+//                if (config.isEnable()) {
+//                    dispatcherExecutor.executeFromDingTalkAsync(args, new Gson().toJson(params), config.getUrl(), config.getSecret(),
+//                            config.isEnableFilter(), FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT)), config.getKeys().split(","));
+//                }
+//            });
+//        }
+
+
+        List<AlarmConfigDO> alarmConfigDOS = alarmConfigMapper.selectList(null);
+        // custom sms
+        List<SmsAlarmConfigDO> smsAlarmConfigDOS = smsAlarmConfigMapper.selectList(null);
 
         List<AlertMessage.AlertsDTO> alerts = alertMessage.getAlerts();
+        Set<Map<String, Object>> exist = new HashSet<>();
         if (CollectionUtils.isNotEmpty(alerts)) {
             alerts.forEach(alertsDTO -> {
                 Map<String, Object> labels = new HashMap<>(defaultLabels);
                 labels.put(Label.STATUS, ConvertUtil.statusOf(alertsDTO.getStatus()));
                 labels.put(Label.START_TIME, ConvertUtil.utc2Gmt8(alertsDTO.getStartsAt()));
                 labels.put(Label.END_TIME, ConvertUtil.utc2Gmt8(alertsDTO.getEndsAt()));
+                if (alertsDTO.getAnnotations() != null) {
+                    labels.putAll(alertsDTO.getAnnotations());
+                }
+                if (alertsDTO.getLabels() != null) {
+                    labels.putAll(alertsDTO.getLabels());
+                }
+                if (exist.contains(labels)) {
+                    return;
+                }
+                exist.add(labels);
                 sendAlarm(smsAlarmConfigDOS, labels);
+                sendAlarmDing(alarmConfigDOS, labels);
             });
         } else {
             Map<String, Object> labels = new HashMap<>(defaultLabels);
@@ -100,6 +141,7 @@ public class DispatcherServiceImpl implements DispatcherService {
             }
             labels.put(Label.STATUS, ConvertUtil.statusOf(alertMessage.getStatus()));
             sendAlarm(smsAlarmConfigDOS, labels);
+            sendAlarmDing(alarmConfigDOS, labels);
         }
 
 
@@ -110,8 +152,29 @@ public class DispatcherServiceImpl implements DispatcherService {
         smsAlarmConfigDOS.forEach(config -> {
             if (config.isEnable()) {
                 String messageBody = ConvertUtil.convert(config.getTemplate(), labels);
-                Set<String> set = Arrays.stream(config.getMobile().split(",")).map(String::trim).filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
-                dispatcherExecutor.executeSmsAsync(new ArrayList<>(set), messageBody, config.getType());
+                Set<String> set = Arrays
+                        .stream(config.getMobile().split(","))
+                        .map(String::trim)
+                        .filter(StringUtils::isNotEmpty)
+                        .collect(Collectors.toSet());
+                dispatcherExecutor.executeFromAlertAsync(new ArrayList<>(set), messageBody,
+                        config.getType(), config.getEnableFilter(),
+                        FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT))
+                        , config.getKeys());
+            }
+        });
+    }
+
+    private void sendAlarmDing(List<AlarmConfigDO> alarmConfigDOS, Map<String, Object> labels) {
+        alarmConfigDOS.forEach(config -> {
+            if (config.isEnable()) {
+                String messageBody = ConvertUtil.convert(config.getTemplate(), labels);
+                String body = formatMarkdownBody(messageBody, labels);
+                Map<String, Object> args = new HashMap<>();
+                dispatcherExecutor.executeStandardDingBodyAsync(args, body,
+                        config.getUrl(), config.getSecret(), config.isEnableFilter(),
+                        FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT))
+                        , config.getKeys());
             }
         });
     }
@@ -123,5 +186,23 @@ public class DispatcherServiceImpl implements DispatcherService {
         String START_TIME = "startsAt";
 
         String END_TIME = "endsAt";
+    }
+
+    private String formatMarkdownBody(String body, Map<String, Object> labels) {
+        Map<String, Object> map = new HashMap<>();
+        String alertName = "告警";
+        if (labels.containsKey("alertname")) {
+            alertName = (String) labels.get("alertname");
+        }
+        String text = body;
+        if (!text.contains("  \n  ")) {
+            text = body.replace("\n", "  \n  ");
+        }
+        map.put("msgtype", "markdown");
+        Map<String, Object> content = new HashMap<>();
+        content.put("title", alertName);
+        content.put("text", text);
+        map.put("markdown", content);
+        return new Gson().toJson(map);
     }
 }

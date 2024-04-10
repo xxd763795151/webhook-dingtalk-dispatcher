@@ -215,6 +215,12 @@ const columns = [
     ellipsis: true,
   },
   {
+    title: "模板",
+    dataIndex: "template",
+    key: "template",
+    ellipsis: true,
+  },
+  {
     title: "操作",
     key: "operation",
     scopedSlots: { customRender: "operation" },

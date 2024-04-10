@@ -36,20 +36,33 @@ public class DispatcherExecutor {
     }
 
     @Async
-    public void executeAsync(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
-                             FilterType type,
-                             String... keys) {
-        execute(args, body, url, secret, keysFilter, type, keys);
+    public void executeStandardDingBodyAsync(Map<String, Object> args,
+                                             String body,
+                                             String url,
+                                             String secret,
+                                             boolean keysFilter,
+                                             FilterType type,
+                                             String... keys) {
+        executeStandardDingBody(args, body, url, secret, keysFilter, type, keys);
     }
 
     @Async
-    public void executeSmsAsync(List<String> mobiles, String message, int type) {
-        executeSms(mobiles, message, type);
+    public void executeFromAlertAsync(List<String> mobiles,
+                                      String message,
+                                      int alarmType,
+                                      boolean keysFilter,
+                                      FilterType type,
+                                      String... keys) {
+        executeFromAlert(mobiles, message, alarmType, keysFilter, type, keys);
     }
 
-    public DingResponse execute(Map<String, Object> args, String body, String url, String secret, boolean keysFilter,
-                                FilterType type,
-                                String... keys) {
+    public DingResponse executeStandardDingBody(Map<String, Object> args,
+                                                String body,
+                                                String url,
+                                                String secret,
+                                                boolean keysFilter,
+                                                FilterType type,
+                                                String... keys) {
         // 是否通过一些关键字进行过滤
         if (keysFilter) {
             boolean pass = false;
@@ -117,10 +130,49 @@ public class DispatcherExecutor {
         }
     }
 
-    public DingResponse executeSms(List<String> mobiles, String message, int type) {
+    public DingResponse executeFromAlert(List<String> mobiles,
+                                         String message,
+                                         int alarmType,
+                                         boolean keysFilter,
+                                         FilterType type,
+                                         String... keys) {
+        // 是否通过一些关键字进行过滤
+        if (keysFilter) {
+            boolean pass = false;
+            switch (type) {
+                case OR:
+                    for (String key : keys) {
+                        if (StringUtils.isNotBlank(key) && message.indexOf(key.trim()) >= 0) {
+                            pass = true;
+                            break;
+                        }
+                    }
+                    break;
+                case AND:
+                    int size = keys.length;
+                    if (size > 0) {
+                        for (String key : keys) {
+                            if (StringUtils.isNotBlank(key) && message.indexOf(key.trim()) >= 0) {
+                                size--;
+                            }
+                        }
+                        pass = size == 0;
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("filter type is illegal.");
+            }
+
+            if (!pass) {
+                DingResponse response = new DingResponse();
+                response.setErrcode(-9999);
+                response.setErrmsg("keys is not match.");
+                return response;
+            }
+        }
         log.info("Sms alarm, mobiles: {}, message: {}", mobiles, message);
         for (String mobile : mobiles) {
-            smsAlert.send(mobile, message, type);
+            smsAlert.send(mobile, message, alarmType);
         }
         return DingResponse.def();
     }

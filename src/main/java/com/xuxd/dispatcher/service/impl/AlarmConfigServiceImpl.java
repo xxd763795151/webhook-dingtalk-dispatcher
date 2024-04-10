@@ -61,7 +61,7 @@ public class AlarmConfigServiceImpl implements AlarmConfigService {
         log.info("test alarm config: {}", dto);
         Map<String, Object> args = new HashMap<>();
         String body = formatBody("Dispatcher alarm test, keys: " + dto.getKeys());
-        DingResponse response = dispatcherExecutor.execute(args, body, dto.getUrl(), dto.getSecret(), dto.isEnableFilter(), FilterType.valueOf(dto.getFilterType()), dto.getKeys());
+        DingResponse response = dispatcherExecutor.executeStandardDingBody(args, body, dto.getUrl(), dto.getSecret(), dto.isEnableFilter(), FilterType.valueOf(dto.getFilterType()), dto.getKeys());
         log.info("test response: {}", response);
         ResponseData responseData = ResponseData.create();
         responseData.setCode(response.getErrcode());

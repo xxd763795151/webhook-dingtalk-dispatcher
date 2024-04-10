@@ -6,5 +6,5 @@ package com.xuxd.dispatcher.beans;
  **/
 public class SmsType {
 
-    public static final int SMS = 0, VOICE = 1;
+    public static final int SMS = 0, VOICE = 1, DING = 2;
 }

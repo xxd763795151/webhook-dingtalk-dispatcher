@@ -87,6 +87,32 @@
               v-decorator="['remark', { initialValue: defaultConfig.remark }]"
             />
           </a-form-item>
+          <a-form-item label="模板">
+            <a-textarea
+              rows="6"
+              placeholder="告警模板，示例如下（这句话删除，短信下面的签名【xxx】一定要有，通过ding talk过来的，这个配置实际不生效）：
+【xxx告警】：
+告警名称：${alertname}
+摘要：${summary}
+描述：${description}
+开始时间：${startsAt}
+结束时间：${endsAt}
+其它标签：...
+"
+              v-decorator="[
+                'template',
+                {
+                  initialValue: defaultConfig.template,
+                  rules: [
+                    {
+                      required: true,
+                      message: '输入告警模板!',
+                    },
+                  ],
+                },
+              ]"
+            />
+          </a-form-item>
           <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
             <a-button type="primary" html-type="submit"> 提交 </a-button>
             <a-button type="danger" class="test-btn" @click="testConfig">
