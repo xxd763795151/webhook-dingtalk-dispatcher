@@ -37,41 +37,48 @@ public class DispatcherExecutor {
 
     @Async
     public void executeStandardDingBodyAsync(Map<String, Object> args,
+                                             Map<String, Object> labels,
                                              String body,
                                              String url,
                                              String secret,
                                              boolean keysFilter,
                                              FilterType type,
                                              String... keys) {
-        executeStandardDingBody(args, body, url, secret, keysFilter, type, keys);
+        executeStandardDingBody(args, labels, body, url, secret, keysFilter, type, keys);
     }
 
     @Async
     public void executeFromAlertAsync(List<String> mobiles,
+                                      Map<String, Object> labels,
                                       String message,
                                       int alarmType,
                                       boolean keysFilter,
                                       FilterType type,
                                       String... keys) {
-        executeFromAlert(mobiles, message, alarmType, keysFilter, type, keys);
+        executeFromAlert(mobiles, labels, message, alarmType, keysFilter, type, keys);
     }
 
     public DingResponse executeStandardDingBody(Map<String, Object> args,
+                                                Map<String, Object> labels,
                                                 String body,
                                                 String url,
                                                 String secret,
                                                 boolean keysFilter,
                                                 FilterType type,
                                                 String... keys) {
+        String labelsStr = labels.toString();
         // 是否通过一些关键字进行过滤
         if (keysFilter) {
             boolean pass = false;
             switch (type) {
                 case OR:
                     for (String key : keys) {
-                        if (StringUtils.isNotBlank(key) && body.indexOf(key.trim()) >= 0) {
+                        if (StringUtils.isNotBlank(key)
+                                && (body.contains(key.trim()) || labelsStr.contains(key.trim()))) {
                             pass = true;
                             break;
+                        } else {
+                            log.info("[or]不匹配关键字：{}", key);
                         }
                     }
                     break;
@@ -79,8 +86,11 @@ public class DispatcherExecutor {
                     int size = keys.length;
                     if (size > 0) {
                         for (String key : keys) {
-                            if (StringUtils.isNotBlank(key) && body.indexOf(key.trim()) >= 0) {
+                            if (StringUtils.isNotBlank(key)
+                                    && (body.contains(key.trim()) || labelsStr.contains(key.trim()))) {
                                 size--;
+                            } else {
+                                log.info("[and]不匹配关键字：{}", key);
                             }
                         }
                         pass = size == 0;
@@ -131,20 +141,25 @@ public class DispatcherExecutor {
     }
 
     public DingResponse executeFromAlert(List<String> mobiles,
+                                         Map<String, Object> labels,
                                          String message,
                                          int alarmType,
                                          boolean keysFilter,
                                          FilterType type,
                                          String... keys) {
+        String labelsStr = labels.toString();
         // 是否通过一些关键字进行过滤
         if (keysFilter) {
             boolean pass = false;
             switch (type) {
                 case OR:
                     for (String key : keys) {
-                        if (StringUtils.isNotBlank(key) && message.indexOf(key.trim()) >= 0) {
+                        if (StringUtils.isNotBlank(key)
+                                && (message.contains(key.trim()) || labelsStr.contains(key.trim()))) {
                             pass = true;
                             break;
+                        } else {
+                            log.info("[or]不匹配关键字：{}", key);
                         }
                     }
                     break;
@@ -152,8 +167,11 @@ public class DispatcherExecutor {
                     int size = keys.length;
                     if (size > 0) {
                         for (String key : keys) {
-                            if (StringUtils.isNotBlank(key) && message.indexOf(key.trim()) >= 0) {
+                            if (StringUtils.isNotBlank(key)
+                                    && (message.contains(key.trim()) || labelsStr.contains(key.trim()))) {
                                 size--;
+                            } else {
+                                log.info("[and]不匹配关键字：{}", key);
                             }
                         }
                         pass = size == 0;

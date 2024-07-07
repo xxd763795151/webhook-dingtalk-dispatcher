@@ -9,11 +9,12 @@ import com.xuxd.dispatcher.common.DispatcherExecutor;
 import com.xuxd.dispatcher.common.FilterType;
 import com.xuxd.dispatcher.dao.AlarmConfigMapper;
 import com.xuxd.dispatcher.service.AlarmConfigService;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * webhook-dingtalk-dispatcher.
@@ -32,36 +33,42 @@ public class AlarmConfigServiceImpl implements AlarmConfigService {
     private Gson gson = new Gson();
 
     public AlarmConfigServiceImpl(ObjectProvider<AlarmConfigMapper> alarmConfigMapper,
-        ObjectProvider<DispatcherExecutor> executorObjectProvider) {
+                                  ObjectProvider<DispatcherExecutor> executorObjectProvider) {
         this.alarmConfigMapper = alarmConfigMapper.getIfAvailable();
         this.dispatcherExecutor = executorObjectProvider.getIfAvailable();
     }
 
-    @Override public ResponseData selectList() {
+    @Override
+    public ResponseData selectList() {
         return ResponseData.create().data(alarmConfigMapper.selectList(new QueryWrapper<>())).success();
     }
 
-    @Override public ResponseData addAlarmConfig(AlarmConfigDTO dto) {
+    @Override
+    public ResponseData addAlarmConfig(AlarmConfigDTO dto) {
         alarmConfigMapper.insert(dto.toDO());
         return ResponseData.create().success();
     }
 
-    @Override public ResponseData deleteAlarmConfig(AlarmConfigDTO dto) {
+    @Override
+    public ResponseData deleteAlarmConfig(AlarmConfigDTO dto) {
         alarmConfigMapper.deleteById(dto.getId());
         return ResponseData.create().success();
     }
 
-    @Override public ResponseData updateAlarmConfig(AlarmConfigDTO dto) {
+    @Override
+    public ResponseData updateAlarmConfig(AlarmConfigDTO dto) {
         alarmConfigMapper.updateById(dto.toDO());
         return ResponseData.create().success();
     }
 
-    @Override public ResponseData testAlarmConfig(AlarmConfigDTO dto) {
+    @Override
+    public ResponseData testAlarmConfig(AlarmConfigDTO dto) {
 
         log.info("test alarm config: {}", dto);
         Map<String, Object> args = new HashMap<>();
         String body = formatBody("Dispatcher alarm test, keys: " + dto.getKeys());
-        DingResponse response = dispatcherExecutor.executeStandardDingBody(args, body, dto.getUrl(), dto.getSecret(), dto.isEnableFilter(), FilterType.valueOf(dto.getFilterType()), dto.getKeys());
+        DingResponse response = dispatcherExecutor.executeStandardDingBody(args, args,
+                body, dto.getUrl(), dto.getSecret(), dto.isEnableFilter(), FilterType.valueOf(dto.getFilterType()), dto.getKeys());
         log.info("test response: {}", response);
         ResponseData responseData = ResponseData.create();
         responseData.setCode(response.getErrcode());

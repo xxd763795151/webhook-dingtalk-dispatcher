@@ -69,7 +69,7 @@ public class SmsAlarmConfigServiceImpl implements SmsAlarmConfigService {
         labels.put("endsAt", ConvertUtil.utc2Gmt8("0001-01-01T00:00:00Z"));
         String messageBody = ConvertUtil.convert(dto.getTemplate(), labels);
         Set<String> set = Arrays.stream(dto.getMobile().split(",")).map(String::trim).filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
-        DingResponse response = dispatcherExecutor.executeFromAlert(new ArrayList<>(set), messageBody, dto.getType(),
+        DingResponse response = dispatcherExecutor.executeFromAlert(new ArrayList<>(set), labels, messageBody, dto.getType(),
                 true, FilterType.OR, "测试");
         log.info("test response: {}", response);
         ResponseData responseData = ResponseData.create();

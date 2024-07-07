@@ -56,7 +56,7 @@ public class DispatcherServiceImpl implements DispatcherService {
             // 通过dingtalk过来的，数据不要处理，透传
             configDOS.forEach(config -> {
                 if (config.isEnable()) {
-                    dispatcherExecutor.executeStandardDingBodyAsync(args, body, config.getUrl(), config.getSecret(),
+                    dispatcherExecutor.executeStandardDingBodyAsync(args, args, body, config.getUrl(), config.getSecret(),
                             config.isEnableFilter(), FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT)), config.getKeys().split(","));
                 }
             });
@@ -157,12 +157,24 @@ public class DispatcherServiceImpl implements DispatcherService {
                         .map(String::trim)
                         .filter(StringUtils::isNotEmpty)
                         .collect(Collectors.toSet());
-                dispatcherExecutor.executeFromAlertAsync(new ArrayList<>(set), messageBody,
+                String[] keyArr = getKeys(config.getKeys());
+                dispatcherExecutor.executeFromAlertAsync(new ArrayList<>(set), labels, messageBody,
                         config.getType(), config.getEnableFilter(),
                         FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT))
-                        , config.getKeys());
+                        , keyArr);
             }
         });
+    }
+
+    private String[] getKeys(String keys) {
+        String[] arr = keys.split(",");
+        List<String> keyList = Arrays.stream(arr)
+                .map(String::trim)
+                .filter(StringUtils::isNotEmpty)
+                .collect(Collectors.toList());
+        String[] keyArr = new String[keyList.size()];
+        keyList.toArray(keyArr);
+        return keyArr;
     }
 
     private void sendAlarmDing(List<AlarmConfigDO> alarmConfigDOS, Map<String, Object> labels) {
@@ -171,10 +183,11 @@ public class DispatcherServiceImpl implements DispatcherService {
                 String messageBody = ConvertUtil.convert(config.getTemplate(), labels);
                 String body = formatMarkdownBody(messageBody, labels);
                 Map<String, Object> args = new HashMap<>();
-                dispatcherExecutor.executeStandardDingBodyAsync(args, body,
+                String[] keyArr = getKeys(config.getKeys());
+                dispatcherExecutor.executeStandardDingBodyAsync(args, labels, body,
                         config.getUrl(), config.getSecret(), config.isEnableFilter(),
                         FilterType.valueOf(config.getFilterType().toUpperCase(Locale.ROOT))
-                        , config.getKeys());
+                        , keyArr);
             }
         });
     }
